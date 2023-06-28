@@ -5,15 +5,22 @@ from typing import Any
 import constants
 import datetime
 
+
 class Order:
     def __init__(self, id: int) -> None:
         self.id = id
 
     async def __query(self, field: str) -> Any:
-        return (await database.fetch(f"SELECT {field} FROM orders WHERE id = ?", self.id))[0][0]
+        return (
+            await database.fetch(
+                f"SELECT {field} FROM orders WHERE id = ?", self.id
+            )
+        )[0][0]
 
     async def __update(self, field: str, value: Any) -> None:
-        await database.fetch(f"UPDATE orders SET {field} = ? WHERE id = ?", value, self.id)
+        await database.fetch(
+            f"UPDATE orders SET {field} = ? WHERE id = ?", value, self.id
+        )
 
     @property
     def database_table(self) -> str:
@@ -33,21 +40,19 @@ class Order:
     @property
     async def user_id(self) -> int:
         return await self.__query("user_id")
-    
-    
 
     # items is a json string
-        # items: [
-        #   {
-        #       "id": 1,
-        #       "amount": 2
-        #       "title": "title",
-        #       "price": 100 # price per item
-        #   }
-        # ]
-        # payment_method_id: 1
-        # delivery_id: 1
-        # delivery_price: 100
+    # items: [
+    #   {
+    #       "id": 1,
+    #       "amount": 2
+    #       "title": "title",
+    #       "price": 100 # price per item
+    #   }
+    # ]
+    # payment_method_id: 1
+    # delivery_id: 1
+    # delivery_price: 100
 
     @property
     async def __items_raw(self) -> str:
@@ -64,7 +69,7 @@ class Order:
     class __Item:
         def __init__(self, item_raw: str) -> None:
             self.__item_raw = item_raw
-        
+
         def __repr__(self) -> str:
             return self.__item_raw
 
@@ -122,31 +127,54 @@ class Order:
     @property
     async def status(self) -> int:
         return await self.__query("status")
+
     async def set_status(self, status: int) -> None:
         await self.__update("status", status)
 
     @property
     async def date_created_raw(self) -> str:
         return await self.__query("date_created")
+
     @property
     async def date_created(self) -> datetime.datetime:
-        return datetime.datetime.strptime(await self.date_created_raw, constants.TIME_FORMAT)
-
+        return datetime.datetime.strptime(
+            await self.date_created_raw, constants.TIME_FORMAT
+        )
 
 
 async def get_orders_by_status(status: int) -> list[Order]:
-    return [Order(order_id) for order_id in (await database.fetch("SELECT id FROM orders WHERE status = ?", status))]
+    return [
+        Order(order_id)
+        for order_id in (
+            await database.fetch(
+                "SELECT id FROM orders WHERE status = ?", status
+            )
+        )
+    ]
+
 
 async def create(
     user_id: int,
     items_json: str,
-    date_created: datetime.datetime | None,
     adress: str | None = None,
     phone_number: str | None = None,
     email: str | None = None,
     comment: str | None = None,
 ) -> Order:
-    await database.fetch("INSERT INTO orders (user_id, items, adress, phone_number, email, comment, date_created) VALUES (?, ?, ?, ?, ?, ?)", user_id, items_json, adress, phone_number, email, comment, date_created)
-    return Order((await database.fetch("SELECT id FROM orders ORDER BY id DESC LIMIT 1"))[0][0])
-
-
+    await database.fetch(
+        "INSERT INTO orders (user_id, items, adress, phone_number, email, comment, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        user_id,
+        items_json,
+        adress,
+        phone_number,
+        email,
+        comment,
+        datetime.datetime.now().strftime(constants.TIME_FORMAT),
+    )
+    return Order(
+        (
+            await database.fetch(
+                "SELECT id FROM orders ORDER BY id DESC LIMIT 1"
+            )
+        )[0][0]
+    )

@@ -23,7 +23,12 @@ import schedules
 if not os.path.exists("database.db"):
     tasks = [
         database.fetch(object.database_table)
-        for object in [users.User(0), items.Item(0), categories.Category(0), orders.Order(0)]
+        for object in [
+            users.User(0),
+            items.Item(0),
+            categories.Category(0),
+            orders.Order(0),
+        ]
     ]
     asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
 
@@ -43,7 +48,9 @@ dp = Dispatcher(bot, storage=storage)
 
 @dp.message_handler(commands=["start"])
 async def welcome(message: types.Message) -> None:
-    await users.create_if_not_exist(message.chat.id, message.from_user.username)
+    await users.create_if_not_exist(
+        message.chat.id, message.from_user.username
+    )
     user = users.User(message.chat.id)
 
     markup = markups.main
@@ -58,13 +65,18 @@ async def welcome(message: types.Message) -> None:
 
     await bot.send_message(
         chat_id=user.id,
-        text=config["info"]["greeting"].replace("%s", message.from_user.full_name),
+        text=config["info"]["greeting"].replace(
+            "%s", message.from_user.full_name
+        ),
         reply_markup=markup,
     )
 
+
 @dp.message_handler()
 async def handle_text(message: types.Message) -> None:
-    await users.create_if_not_exist(message.chat.id, message.from_user.username)
+    await users.create_if_not_exist(
+        message.chat.id, message.from_user.username
+    )
     user = users.User(message.chat.id)
     destination = ""
     role = "user"
@@ -98,23 +110,30 @@ async def handle_text(message: types.Message) -> None:
     if not permission:
         return await utils.sendNoPermission(message)
 
-    await importlib.import_module(f"callbacks.{role}.{destination}").execute(None, user, None, message)
+    # await importlib.import_module(f"callbacks.{role}.{destination}").execute(None, user, None, message)
+    await importlib.import_module(
+        f"callbacks.{role if role != 'manager' else 'user'}.{destination}"
+    ).execute(None, user, None, message)
+
 
 @dp.callback_query_handler()
 async def process_callback(callback_query: types.CallbackQuery) -> None:
     call = callback_query.data
-    if call == "None": return
+    if call == "None":
+        return
 
     user = users.User(callback_query.message.chat.id)
-    data = json.loads(call[:call.index("}")+1])
-    call = call[call.index("}")+1:]
+    data = json.loads(call[: call.index("}") + 1])
+    call = call[call.index("}") + 1 :]
     execute_args = (callback_query, user, data)
 
     if config["settings"]["debug"]:
         print(f"{call} | [{user.id}] | {data}")
     if call in ["cancel", "skip"]:
         if "d" in data:
-            return await importlib.import_module(f"callbacks.{data['r']}.{data['d']}").execute(*execute_args)
+            return await importlib.import_module(
+                f"callbacks.{data['r']}.{data['d']}"
+            ).execute(*execute_args)
 
         await callback_query.message.delete()
         return
@@ -129,66 +148,92 @@ async def process_callback(callback_query: types.CallbackQuery) -> None:
         return await utils.sendNoPermission(callback_query.message)
 
     try:
-        return await importlib.import_module(f"callbacks.{data['r']}.{call}").execute(*execute_args)
+        return await importlib.import_module(
+            f"callbacks.{data['r']}.{call}"
+        ).execute(*execute_args)
     except ModuleNotFoundError:
-        await callback_query.answer(
-            text=constants.language.unknown_command
-        )
+        await callback_query.answer(text=constants.language.unknown_command)
 
 
 def parse_state(current_state: State) -> str:
     current_state_str = str(current_state)
-    return current_state_str[current_state_str.index("'")+1:-2]
+    return current_state_str[current_state_str.index("'") + 1 : -2]
 
 
 # states
 @dp.callback_query_handler(state="*")
-async def process_callback_state(callback_query: types.CallbackQuery, state: FSMContext) -> None:
+async def process_callback_state(
+    callback_query: types.CallbackQuery, state: FSMContext
+) -> None:
     call = callback_query.data
-    if call == "None": return
+    if call == "None":
+        return
 
     user = users.User(callback_query.message.chat.id)
-    data = json.loads(call[:call.index("}")+1])
-    call = call[call.index("}")+1:]
+    data = json.loads(call[: call.index("}") + 1])
+    call = call[call.index("}") + 1 :]
     execute_args = (callback_query, user, data)
 
     if config["settings"]["debug"]:
-        print(f"[STATE: {await state.get_state()}] {call} | [{user.id}] | {data}")
+        print(
+            f"[STATE: {await state.get_state()}] {call} | [{user.id}] | {data}"
+        )
 
     if call == "cancel":
         await state.finish()
         if "d" in data:
-            return await importlib.import_module(f"callbacks.{data['r']}.{data['d']}").execute(*execute_args)
+            return await importlib.import_module(
+                f"callbacks.{data['r']}.{data['d']}"
+            ).execute(*execute_args)
 
         await callback_query.message.edit_text(
             text=constants.language.state_cancelled,
         )
         return
 
-    
-    state_path = f"callbacks.states.{(await state.get_state()).replace(':', '_')}"
+    state_path = (
+        f"callbacks.states.{(await state.get_state()).replace(':', '_')}"
+    )
     try:
-        await importlib.import_module(state_path).execute(callback_query=callback_query, user=user, data=data, state=state)
+        await importlib.import_module(state_path).execute(
+            callback_query=callback_query, user=user, data=data, state=state
+        )
     except ModuleNotFoundError:
         await utils.sendStateNotFound(callback_query.message)
     except:
         import traceback
+
         traceback.print_exc()
 
 
 @dp.message_handler(state="*", content_types=types.ContentTypes.ANY)
-async def process_message_state(message: types.Message, state: FSMContext) -> None:
-    state_path = f"callbacks.states.{(await state.get_state()).replace(':', '_')}"
+async def process_message_state(
+    message: types.Message, state: FSMContext
+) -> None:
+    state_path = (
+        f"callbacks.states.{(await state.get_state()).replace(':', '_')}"
+    )
 
     try:
-        await importlib.import_module(state_path).execute(callback_query=None, user=users.User(message.chat.id), data=None, message=message, state=state)
+        await importlib.import_module(state_path).execute(
+            callback_query=None,
+            user=users.User(message.chat.id),
+            data=None,
+            message=message,
+            state=state,
+        )
     except ModuleNotFoundError:
         await utils.sendStateNotFound(message)
     except:
         import traceback
+
         traceback.print_exc()
 
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True, loop=constants.loop, on_startup=schedules.on_startup)
-
+    executor.start_polling(
+        dp,
+        skip_updates=True,
+        loop=constants.loop,
+        on_startup=schedules.on_startup,
+    )
