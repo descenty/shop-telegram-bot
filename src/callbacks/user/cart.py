@@ -5,18 +5,27 @@ from markups import markups
 import asyncio
 
 
-async def execute(callback_query: types.CallbackQuery, user: models.users.User, data: dict, message=None) -> None:
+async def execute(
+    callback_query: types.CallbackQuery,
+    user: models.users.User,
+    data: dict,
+    message=None,
+) -> None:
     cart_items_dict = await user.cart.items.dict
 
     if not cart_items_dict:
         if message:
             return await message.answer(constants.language.cart_empty)
-        return await callback_query.message.edit_text(constants.language.cart_empty)
-        
+        return await callback_query.message.edit_text(
+            constants.language.cart_empty
+        )
+
     text = constants.language.cart
-    
+
     def changeCart_callback(item_id: int, state: int) -> str:
-        return f'{{"r":"user","iid":{item_id},"s":{state},"d":"cart"}}changeCart'
+        return (
+            f'{{"r":"user","iid":{item_id},"s":{state},"d":"cart"}}changeCart'
+        )
 
     markup = []
 
@@ -26,33 +35,46 @@ async def execute(callback_query: types.CallbackQuery, user: models.users.User, 
         item = models.items.Item(item_id)
 
         item_name, item_price, total_price = await asyncio.gather(
-            item.name,
-            item.price,
-            user.cart.total_price
+            item.name, item.price, user.cart.total_price
         )
-        markup.append((f"[{item_price}{currency}] {item_name}", f'{{"r":"user","rd":"cart","iid":{item.id}}}item'))
-        markup += [(
-            (constants.language.minus, changeCart_callback(item_id, 0)),
-            (f"[{amount}] {amount*item_price}{currency}", "None"),
-            (constants.language.plus, changeCart_callback(item_id, 1))
-        )]
+        markup.append(
+            (
+                f"{item_price}{currency} {item_name}",
+                f'{{"r":"user","rd":"cart","iid":{item.id}}}item',
+            )
+        )
+        markup += [
+            (
+                (constants.language.minus, changeCart_callback(item_id, 0)),
+                (f"[{amount}] {amount*item_price}{currency}", "None"),
+                (constants.language.plus, changeCart_callback(item_id, 1)),
+            )
+        ]
 
-    payment_method, delivery_id = await asyncio.gather(
-        user.cart.payment_method,
-        user.cart.delivery_id
-    )
-    changePaymentMethod_callback = f"{constants.JSON_USER}cyclePaymentMethod"
+    # payment_method, delivery_id = await asyncio.gather(
+    #     user.cart.payment_method, user.cart.delivery_id
+    # )
+    # changePaymentMethod_callback = f"{constants.JSON_USER}cyclePaymentMethod"
+    # markup.append(
+    #     (constants.language.payment_method, changePaymentMethod_callback)
+    #     if not payment_method.id
+    #     else (payment_method["title"], changePaymentMethod_callback)
+    # )
+
+    # if constants.config["delivery"]["enabled"]:
+    #     markup.append(
+    #         (
+    #             constants.language.format_delivery(
+    #                 constants.config["delivery"]["price"]
+    #             )
+    #             if delivery_id
+    #             else constants.language.self_pickup,
+    #             f"{constants.JSON_USER}cycleDelivery",
+    #         )
+    #     )
     markup.append(
-        (constants.language.payment_method, changePaymentMethod_callback) 
-        if not payment_method.id else
-        (payment_method["title"], changePaymentMethod_callback)
+        ("------------------------------------------------------", "None")
     )
-
-    if constants.config["delivery"]["enabled"]:
-        markup.append((
-            constants.language.format_delivery(constants.config["delivery"]["price"]) if delivery_id else constants.language.self_pickup,
-            f"{constants.JSON_USER}cycleDelivery"
-        ))
     markup.append(
         (constants.language.cart_total_price(total_price, currency), "None")
     )
@@ -66,13 +88,12 @@ async def execute(callback_query: types.CallbackQuery, user: models.users.User, 
     markup = markups.create(markup)
 
     if not message:
+        if callback_query.message.text is None:
+            await callback_query.message.delete()
+            return await callback_query.message.answer(
+                text=text, reply_markup=markup
+            )
         return await callback_query.message.edit_text(
-            text=text,
-            reply_markup=markup
+            text=text, reply_markup=markup
         )
-    await message.answer(
-        text=text,
-        reply_markup=markup
-    )
-
-
+    await message.answer(text=text, reply_markup=markup)

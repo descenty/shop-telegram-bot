@@ -44,8 +44,20 @@ async def execute(
         # )
 
         # await states.Order.confirmation.set()
-
-        cart_items = json.dumps(await user.cart.items.dict)
+        order_items_amount = [
+            (models.items.Item(int(item_id)), amount)
+            for item_id, amount in (await user.cart.items.dict).items()
+        ]
+        cart_items_dict = [
+            {
+                "id": item.id,
+                "title": await item.name,
+                "amount": amount,
+                "price": await item.price,
+            }
+            for item, amount in order_items_amount
+        ]
+        cart_items = json.dumps(cart_items_dict)
 
         await user.cart.items.clear()
 

@@ -14,7 +14,7 @@ async def execute(callback_query: types.CallbackQuery, user: models.users.User, 
     )
 
     markup = [
-        (constants.language.orders, f"{constants.JSON_USER}orders"),
+        (constants.language.my_orders, f"{constants.JSON_USER}orders"),
     ]
 
     text = constants.language.format_user_profile(

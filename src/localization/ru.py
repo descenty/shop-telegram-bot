@@ -10,8 +10,8 @@ no = "❌ Нет"
 enabled = "✅ Включено"
 disabled = "❌ Выключено"
 error = "Произошла ошибка!"
-or_press_back = "или нажмите на кнопку \"Назад\"."
-or_press_skip = "или нажмите на кнопку \"Пропустить\"."
+or_press_back = 'или нажмите на кнопку "Назад".'
+or_press_skip = 'или нажмите на кнопку "Пропустить".'
 hide = "🙈 Скрыть"
 show = "🐵 Показать"
 delete = "❌ Удалить"
@@ -35,13 +35,20 @@ support_menu = "☎ Меню тех. поддержки"
 # Cart
 payment_method = "💳 Способ оплаты"
 choose_payment_method = "Выберите способ оплаты:"
+
+
 def format_delivery(delivery_price: int) -> str:
     return f"🚚 Доставка: {delivery_price} руб."
+
+
 delivery = "🚚 Доставка"
 self_pickup = "🖐️ Самовывоз"
 cart_empty = "Ваша корзина пуста!"
+
+
 def cart_total_price(price: float, currency_sym: str) -> str:
     return f"🛒 Итоговая цена: {price:.2f} {currency_sym}"
+
 
 # Admin panel tabs
 item_management = "📦 Управление товаром"
@@ -54,10 +61,12 @@ settings = "⚙ Настройки"
 # Main settings
 language = "🌐 Язык"
 choose_a_language = f"Выберите язык {or_press_skip}:"
-language_was_set = "Язык был успешно изменен! Для применения изменений перезапустите бота."
+language_was_set = (
+    "Язык был успешно изменен! Для применения изменений перезапустите бота."
+)
 english = "🇬🇧 Английский"
 russian = "🇷🇺 Русский"
-input_greeting = "Форматирование: \n\"%s\" - ник пользователя\n\nВведите приветственное сообщение:"
+input_greeting = 'Форматирование: \n"%s" - ник пользователя\n\nВведите приветственное сообщение:'
 greeting_was_set = "Приветственное сообщение было успешно изменено!"
 
 greeting = "👋 Приветствие"
@@ -80,18 +89,50 @@ add_to_cart = "🛒 Добавить в корзину"
 not_in_stock = "❌ Нет в наличии"
 cart_is_empty = "Корзина пуста."
 category_is_empty = "Категория пуста."
-textpickup = "✅Самовывоз"
-def delivery_on(price): return f"✅ Доставка - {price}руб."
-def delivery_off(price): return f"❌ Доставка - {price}руб."
+textpickup = "✅ Самовывоз"
+
+
+def delivery_on(price):
+    return f"✅ Доставка - {price}руб."
+
+
+def delivery_off(price):
+    return f"❌ Доставка - {price}руб."
+
+
 cart_checkout = "Оформить заказ"
 clear_cart = "Очистить корзину"
-status_processing = "Обрабатывается"
-status_delivery = "Ожидает доставки"
-status_done = "Готов"
-status_cancelled = "Отменён"
+
+change_status = "Изменить статус"
+
+def change_status_to(new_status):
+    return f"Изменить статус на {new_status}"
+
+
+status_created = "📝 Создан"
+created_orders_short = "📝 Созданные"
+created_orders = "📝 Созданные заказы"
+
+status_paid = "💰 Оплачен"
+paid_orders_short = "💰 Оплаченные"
+paid_orders = "💰 Оплаченные заказы"
+
+status_in_delivery = "🚚 Доставляется"
+in_delivery_orders_short = "🚚 В доставке"
+in_delivery_orders = "🚚 Заказы в доставке"
+
+status_done = "✅ Завершен"
+done_orders_short = "✅ Завершенные"
+done_orders = "✅ Завершенные заказы"
+
+status_canceled = "❌ Отменен"
+canceled_orders = "❌ Отмененные заказы"
+
+
 def item(item):
     stock = "под заказ" if item.is_custom else f"{item.amount}"
     return f"{item.name}\n{item.price:.2f} руб.\nВ наличии: {stock}\n{item.description}"
+
 
 # Category management
 add_category = "🛍️ Добавить категорию"
@@ -99,16 +140,25 @@ edit_category = "✏️ Редактировать категорию"
 input_category_name = f"Введите название категории {or_press_back}"
 set_parent_category = f"📁 Выберите родительскую категорию {or_press_skip}"
 category_created = "Категория успешно создана."
-def format_category(category_id, category_name, category_parent_id, category_parent_name):
+
+
+def format_category(
+    category_id, category_name, category_parent_id, category_parent_name
+):
     return f"Категория: [{category_id}]{category_name}\nРодительская категория: {f'[{category_parent_id}]{category_parent_name}' if category_parent_id else 'Нет'}"
+
+
 edit_parent_category = "📁 Изменить родительскую категорию"
 choose_a_category_to_edit = "Выберите категорию для редактирования:"
 confirm_delete_category = "Вы уверены, что хотите удалить категорию?"
 category_deleted = "Категория успешно удалена."
 
+
 # Item management
 def format_editItemsCategory_text(category_name: str) -> str:
     return f"Выберите товар для редактирования в категории {category_name}:"
+
+
 add_item = "🗃️ Добавить товар"
 edit_item = "✏️ Редактировать товар"
 
@@ -138,35 +188,66 @@ change_desc = "📝 Изменить описание"
 change_price = "🏷️ Изменить цену"
 change_item_cat = "🛍️ Изменить категорию"
 change_stock = "📦 Изменить кол-во"
-def format_confirm_item(name: str, description: str, category_id: int, price: float, images: list[str]) -> str:
+
+
+def format_confirm_item(
+    name: str,
+    description: str,
+    category_id: int,
+    price: float,
+    images: list[str],
+) -> str:
     return f"Товар: {name}\nОписание: {description}\nКатегория: {category_id}\nЦена: {price}\nId изображения: {images}\n\nВы уверены, что хотите создать товар?"
+
+
 item_added = "Товар успешно добавлен."
 
 # User management
 user_does_not_exist = "Пользователь не найден. {try_again}"
-def format_user_profile(id: int, username: str, registration_date: str, is_admin: bool, is_manager: bool) -> str:
+
+
+def format_user_profile(
+    id: int,
+    username: str,
+    registration_date: str,
+    is_admin: bool,
+    is_manager: bool,
+) -> str:
     role = "Пользователь"
     if is_admin:
         role = "Администратор"
     elif is_manager:
         role = "Менеджер"
     return f"ID: {id}\nИмя: {username}\nДата регистрации: {registration_date}\nРоль: {role}"
+
+
 invalid_user_id = "Неверный ID пользователя. {try_again}"
 
 user_profile = "📁Профиль пользователя"
 input_user_id = f"Введите ID пользователя {or_press_back}"
 notify_everyone = "🔔Оповещение всем пользователям"
 input_notification = f"Введите текст оповещения {or_press_back}"
+
+
 def confirm_notification(text: str) -> str:
     return f"Вы уверены, что хотите отправить оповещение?\nТекст:\n{text}"
+
+
 def notification_sent(done_users: int, total_users: int) -> str:
     return f"Оповещение успешно отправлено {done_users}/{total_users} пользователям."
-orders = "📁 Заказы"
+
+
+manager_panel = "📦 Управление заказами"
+manager_orders = "📁 Заказы"
 remove_manager_role = "👨‍💼 Убрать роль менеджера"
 add_manager_role = "👨‍💼 Сделать менеджером"
 remove_admin_role = "🔴 Убрать роль администратора"
 add_admin_role = "🔴 Сделать администратором"
-def change_order_status(status): return f"Изменить статус на \"{status}\""
+
+
+def change_order_status(status):
+    return f'Изменить статус на "{status}"'
+
 
 # Shop stats
 registration_stats = "👥Статистика регистраций"
@@ -179,7 +260,6 @@ daily = "За последние 24 часа"
 # Payment settings
 yoomoney = "🟢 ЮMoney"
 qiwi = "🏧 QIWI"
-
 
 
 # Shop settings
@@ -240,5 +320,3 @@ confirm_order = "✅ Заказ создан. В ближайшее время �
 
 # Manager tab
 view_order = "📂 Посмотреть заказ"
-
-

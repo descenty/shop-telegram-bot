@@ -28,7 +28,7 @@ class Order:
             id INTEGER PRIMARY KEY,
             user_id INTEGER NOT NULL,
             items TEXT NOT NULL,
-            adress TEXT,
+            address TEXT,
             phone_number TEXT,
             email TEXT,
             comment TEXT,
@@ -66,6 +66,10 @@ class Order:
     async def items(self) -> list["__Item"]:
         return [self.__Item(item) for item in await self.__items_json]
 
+    @property
+    async def total_price(self) -> float:
+        return sum([item.price * item.amount for item in await self.items])
+
     class __Item:
         def __init__(self, item_raw: str) -> None:
             self.__item_raw = item_raw
@@ -78,7 +82,8 @@ class Order:
 
         @property
         def dict(self) -> dict:
-            return json.loads(self.__item_raw)
+            print(self.__item_raw)
+            return self.__item_raw
 
         @property
         def id(self) -> int:
@@ -144,7 +149,7 @@ class Order:
 
 async def get_orders_by_status(status: int) -> list[Order]:
     return [
-        Order(order_id)
+        Order(*order_id)
         for order_id in (
             await database.fetch(
                 "SELECT id FROM orders WHERE status = ?", status

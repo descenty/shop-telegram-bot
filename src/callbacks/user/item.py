@@ -9,7 +9,7 @@ import asyncio
 async def execute(callback_query: types.CallbackQuery, user: models.users.User, data: dict, message=None) -> None:
     item = models.items.Item(data["iid"])
     item_text, category, image_id, cart_dict = await asyncio.gather(
-        item.format_text(constants.config["info"]["item_template"], constants.config["settings"]["currency"]),
+        item.format_text(constants.config["info"]["item_template"], constants.config["settings"]["currency_symbol"]),
         item.category,
         item.image_id,
         user.cart.items.dict,

@@ -6,6 +6,7 @@ from aiogram import Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State
+from aiogram.types import BotCommand
 import dotenv
 
 import constants
@@ -18,6 +19,9 @@ import models.orders as orders
 import utils
 import database
 import schedules
+import locale
+
+locale.setlocale(locale.LC_ALL, "ru_RU.UTF-8")
 
 # First startup
 if not os.path.exists("database.db"):
@@ -46,6 +50,16 @@ bot = constants.create_bot(TOKEN)
 dp = Dispatcher(bot, storage=storage)
 
 
+async def setup_bot_commands():
+    bot_commands = [
+        BotCommand(command="/start", description="Начать работу с ботом"),
+    ]
+    await bot.set_my_commands(bot_commands)
+
+
+asyncio.get_event_loop().run_until_complete(setup_bot_commands())
+
+
 @dp.message_handler(commands=["start"])
 async def welcome(message: types.Message) -> None:
     await users.create_if_not_exist(
@@ -57,7 +71,7 @@ async def welcome(message: types.Message) -> None:
     if await user.is_admin:
         markup.add(types.KeyboardButton(constants.language.admin_panel))
     if await user.is_admin or await user.is_manager:
-        markup.add(types.KeyboardButton(constants.language.orders))
+        markup.add(types.KeyboardButton(constants.language.manager_panel))
 
     if "sticker.tgs" in os.listdir("."):
         with open("sticker.tgs", "rb") as sticker:
@@ -90,11 +104,13 @@ async def handle_text(message: types.Message) -> None:
             destination = "profile"
         case constants.language.faq:
             destination = "faq"
+        case constants.language.my_orders:
+            destination = "orders"
         case constants.language.admin_panel:
             destination = "adminPanel"
             role = "admin"
-        case constants.language.orders:
-            destination = "orders"
+        case constants.language.manager_panel:
+            destination = "manager_panel"
             role = "manager"
 
     if not destination:
@@ -110,10 +126,9 @@ async def handle_text(message: types.Message) -> None:
     if not permission:
         return await utils.sendNoPermission(message)
 
-    # await importlib.import_module(f"callbacks.{role}.{destination}").execute(None, user, None, message)
-    await importlib.import_module(
-        f"callbacks.{role if role != 'manager' else 'user'}.{destination}"
-    ).execute(None, user, None, message)
+    await importlib.import_module(f"callbacks.{role}.{destination}").execute(
+        None, user, None, message
+    )
 
 
 @dp.callback_query_handler()
@@ -146,8 +161,8 @@ async def process_callback(callback_query: types.CallbackQuery) -> None:
             permission = await user.is_manager or await user.is_admin
     if not permission:
         return await utils.sendNoPermission(callback_query.message)
-
     try:
+        print(f"callbacks.{data['r']}.{call}")
         return await importlib.import_module(
             f"callbacks.{data['r']}.{call}"
         ).execute(*execute_args)
