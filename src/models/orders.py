@@ -28,6 +28,7 @@ class Order:
             id INTEGER PRIMARY KEY,
             user_id INTEGER NOT NULL,
             items TEXT NOT NULL,
+            total_price REAL,
             address TEXT,
             phone_number TEXT,
             email TEXT,
@@ -68,7 +69,9 @@ class Order:
 
     @property
     async def total_price(self) -> float:
-        return sum([item.price * item.amount for item in await self.items])
+        if await self.__query("total_price") is None:
+            await self.__update("total_price", sum([item.price * item.amount for item in await self.items]))
+        return await self.__query("total_price")
 
     class __Item:
         def __init__(self, item_raw: str) -> None:
@@ -114,8 +117,8 @@ class Order:
         return int((await self.__items_json)["delivery_price"])
 
     @property
-    async def adress(self) -> str | None:
-        return await self.__query("adress")
+    async def address(self) -> str | None:
+        return await self.__query("address")
 
     @property
     async def phone_number(self) -> str | None:
@@ -161,16 +164,16 @@ async def get_orders_by_status(status: int) -> list[Order]:
 async def create(
     user_id: int,
     items_json: str,
-    adress: str | None = None,
+    address: str | None = None,
     phone_number: str | None = None,
     email: str | None = None,
     comment: str | None = None,
 ) -> Order:
     await database.fetch(
-        "INSERT INTO orders (user_id, items, adress, phone_number, email, comment, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO orders (user_id, items, address, phone_number, email, comment, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)",
         user_id,
         items_json,
-        adress,
+        address,
         phone_number,
         email,
         comment,

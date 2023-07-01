@@ -14,6 +14,6 @@ async def execute(
     return await orders_execute(
         callback_query,
         user,
-        data | {"status": constants.OrderStatus.CREATED},
+        data | {"s": constants.OrderStatus.CREATED},
         message,
     )

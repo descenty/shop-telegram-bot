@@ -43,11 +43,11 @@ def format_delivery(delivery_price: int) -> str:
 
 delivery = "🚚 Доставка"
 self_pickup = "🖐️ Самовывоз"
-cart_empty = "Ваша корзина пуста!"
+cart_empty = "Корзина пуста."
 
 
 def cart_total_price(price: float, currency_sym: str) -> str:
-    return f"🛒 Итоговая цена: {price:.2f} {currency_sym}"
+    return f"🛒 Итого: {price:.2f} {currency_sym}"
 
 
 # Admin panel tabs
@@ -102,6 +102,9 @@ def delivery_off(price):
 
 cart_checkout = "Оформить заказ"
 clear_cart = "Очистить корзину"
+
+def choose_new_status(order_id: int):
+    return f"Выберите новый статус заказа № {order_id}:"
 
 change_status = "Изменить статус"
 

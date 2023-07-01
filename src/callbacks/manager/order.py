@@ -18,7 +18,7 @@ async def execute(
     data: dict,
     message=None,
 ) -> None:
-    order = models.orders.Order(data["order_id"])
+    order = models.orders.Order(data["oid"])
     order_status = constants.OrderStatus(await order.status)
 
     next_order_status = constants.OrderStatus(order_status.value + 1)
@@ -44,9 +44,12 @@ async def execute(
                 constants.language.change_status_to(
                     order_status_text[next_order_status]
                 ),
-                "test",
+                f'{{"r":"manager","oid":{order.id},"s":{next_order_status}}}orders.apply_status',
             ),
-            (constants.language.change_status, "test"),
+            (
+                constants.language.change_status,
+                f'{{"r":"manager","oid":{order.id}}}orders.change_status',
+            ),
             (
                 constants.language.back,
                 orders_destinations[constants.OrderStatus(await order.status)],

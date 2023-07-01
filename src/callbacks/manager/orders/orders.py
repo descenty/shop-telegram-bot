@@ -20,16 +20,16 @@ async def execute(
     data: dict,
     message=None,
 ) -> None:
-    text = orders_text_dict[data["status"]]
+    text = orders_text_dict[data["s"]]
 
-    orders = await models.orders.get_orders_by_status(data["status"].value)
+    orders = await models.orders.get_orders_by_status(data["s"].value)
     
     date_format = "%d %b. %Y %H:%M:%S"
     
     markup = [
         (
             f"{(await order.date_created).strftime(date_format)} - {await order.total_price} ₽",
-            f'{{"r":"manager","order_id":{order.id}}}order',
+            f'{{"r":"manager","oid":{order.id}}}order',
         )
         for order in orders
     ]

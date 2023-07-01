@@ -2,7 +2,6 @@ from aiogram import types
 import models
 import constants
 from markups import markups
-from src.models.orders import Order
 import states
 import asyncio
 
@@ -17,14 +16,17 @@ async def execute(
 
     orders = await user.orders
 
-    markup = markups.create(
-        [
-            (
-                f"Заказ от {await order.date_created}",
-                f'{{"r":"user","cid":{order.id}}}order',
-            )
-            for order in orders
-        ]
-    )
+    date_format = "%d %b. %Y %H:%M:%S"
 
-    await callback_query.message.edit_text(text=text, reply_markup=markup)
+    markup = [
+        (
+            f"{(await order.date_created).strftime(date_format)} - {await order.total_price} ₽",
+            f'{{"r":"user","oid":{order.id}}}order',
+        )
+        for order in orders
+    ]
+    markup.append((constants.language.back, f"{constants.JSON_USER}profile"))
+
+    await callback_query.message.edit_text(
+        text=text, reply_markup=markups.create(markup)
+    )

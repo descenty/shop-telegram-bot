@@ -72,9 +72,9 @@ async def execute(
     #             f"{constants.JSON_USER}cycleDelivery",
     #         )
     #     )
-    markup.append(
-        ("------------------------------------------------------", "None")
-    )
+    # markup.append(
+    #     ("------------------------------------------------------", "None")
+    # )
     markup.append(
         (constants.language.cart_total_price(total_price, currency), "None")
     )
@@ -86,6 +86,9 @@ async def execute(
     )
 
     markup = markups.create(markup)
+
+    if data is not None and "change" in data:
+        return await callback_query.message.edit_reply_markup(markup)
 
     if not message:
         if callback_query.message.text is None:
