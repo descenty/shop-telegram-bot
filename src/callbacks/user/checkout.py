@@ -6,8 +6,14 @@ import models
 import constants
 from markups import markups
 
-# import src.callbacks.states as states
 import states
+
+order_status_text = {
+    constants.OrderStatus.CREATED: constants.language.status_created,
+    constants.OrderStatus.PAID: constants.language.status_paid,
+    constants.OrderStatus.IN_DELIVERY: constants.language.status_in_delivery,
+    constants.OrderStatus.DONE: constants.language.status_done,
+}
 
 
 async def execute(
@@ -61,9 +67,35 @@ async def execute(
 
         await user.cart.items.clear()
 
-        await models.orders.create(user_id=user.id, items_json=cart_items)
+        order = await models.orders.create(
+            user_id=user.id, items_json=cart_items
+        )
 
         await callback_query.message.edit_text(
             text=constants.language.confirm_order,
             reply_markup=markups.create([]),
         )
+
+        # notify all managers
+
+        managers = await models.users.get_managers()
+
+        order_status = constants.OrderStatus(await order.status)
+
+        order_title_price = tuple(
+            (item.title, item.price) for item in await order.items
+        )
+
+        text = constants.language.new_order + "\n"
+
+        text += constants.language.format_order(
+            order.id,
+            await order.date_created,
+            await user.username,
+            order_status_text[order_status],
+            order_title_price,
+            await order.total_price,
+        )
+
+        for manager in managers:
+            await constants.bot.send_message(manager.id, text)

@@ -21,31 +21,32 @@ async def execute(
     order = models.orders.Order(data["oid"])
     order_status = constants.OrderStatus(await order.status)
 
-    next_order_status = constants.OrderStatus(order_status.value + 1)
-
-    date_format = "%d %b. %Y %H:%M:%S"
-    text_list = [
-        f"Заказ №{order.id} от {(await order.date_created).strftime(date_format)}",
-        f"Telegram: @{await models.users.User(await order.user_id).username}",
-        f"Статус: {order_status_text[order_status]}",
-        "---",
-    ]
-    text_list.extend(
-        [
-            f"{index + 1}. {item.title} - {item.price} ₽"
-            for index, item in enumerate(await order.items)
-        ]
+    order_title_price = tuple(
+        (item.title, item.price) for item in await order.items
     )
-    text_list.extend(["---", f"Итого: {await order.total_price} ₽"])
-    text = "\n".join(text_list)
-    markup = markups.create(
-        [
+
+    text = constants.language.format_order(
+        order.id,
+        await order.date_created,
+        await models.users.User(await order.user_id).username,
+        order_status_text[order_status],
+        order_title_price,
+        await order.total_price,
+    )
+
+    markup = []
+    if order_status.value + 1 <= 3:
+        next_order_status = constants.OrderStatus(order_status.value + 1)
+        markup.append(
             (
                 constants.language.change_status_to(
                     order_status_text[next_order_status]
                 ),
-                f'{{"r":"manager","oid":{order.id},"s":{next_order_status}}}orders.apply_status',
-            ),
+                f'{{"r":"manager","oid":{order.id},"s":{next_order_status.value}}}orders.apply_status',
+            )
+        )
+    markup.extend(
+        [
             (
                 constants.language.change_status,
                 f'{{"r":"manager","oid":{order.id}}}orders.change_status',
@@ -59,4 +60,6 @@ async def execute(
 
     if message:
         return await message.answer(text, reply_markup=markup)
-    await callback_query.message.edit_text(text, reply_markup=markup)
+    await callback_query.message.edit_text(
+        text, reply_markup=markups.create(markup)
+    )

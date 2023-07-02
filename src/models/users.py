@@ -187,6 +187,15 @@ async def get_users() -> list[User]:
     ]
 
 
+async def get_managers() -> list[User]:
+    return [
+        User(*user_id)
+        for user_id in await database.fetch(
+            f"SELECT id FROM users WHERE is_manager = 1"
+        )
+    ]
+
+
 async def does_exist(user_id: int) -> bool:
     return bool(
         await database.fetch("SELECT id FROM users WHERE id = ?", user_id)

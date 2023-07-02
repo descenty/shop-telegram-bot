@@ -1,3 +1,5 @@
+from datetime import datetime
+
 # Misc buttons
 try_again = "Попробуйте ещё раз."
 skip = "⏭ Пропустить"
@@ -103,13 +105,46 @@ def delivery_off(price):
 cart_checkout = "Оформить заказ"
 clear_cart = "Очистить корзину"
 
+
 def choose_new_status(order_id: int):
     return f"Выберите новый статус заказа № {order_id}:"
 
+
 change_status = "Изменить статус"
+
 
 def change_status_to(new_status):
     return f"Изменить статус на {new_status}"
+
+def order_status_changed(order_id: int, new_status: str):
+    return f"Статус заказа № {order_id} был изменен на {new_status}"
+
+new_order = "Новый заказ!"
+
+
+def format_order(
+    order_id: int,
+    date_created: datetime,
+    username: str,
+    status_text: str,
+    title_price: tuple[tuple[str, int]],
+    total_price: float,
+) -> str:
+    date_format = "%d %b. %Y %H:%M:%S"
+    text_list = [
+        f"Заказ № {order_id} от {(date_created).strftime(date_format)}",
+        f"Telegram: @{username}",
+        f"Статус: {status_text}",
+        "---",
+    ]
+    text_list.extend(
+        [
+            f"{index + 1}. {title} - {price} ₽"
+            for index, (title, price) in enumerate(title_price)
+        ]
+    )
+    text_list.extend(["---", f"Итого: {total_price} ₽"])
+    return "\n".join(text_list)
 
 
 status_created = "📝 Создан"
@@ -120,7 +155,7 @@ status_paid = "💰 Оплачен"
 paid_orders_short = "💰 Оплаченные"
 paid_orders = "💰 Оплаченные заказы"
 
-status_in_delivery = "🚚 Доставляется"
+status_in_delivery = "🚚 В доставке"
 in_delivery_orders_short = "🚚 В доставке"
 in_delivery_orders = "🚚 Заказы в доставке"
 

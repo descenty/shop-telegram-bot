@@ -2,29 +2,35 @@ import aioschedule
 import asyncio
 import os, shutil
 from datetime import datetime
+from s3backup import upload_objects
 
 
 async def scheduler(func: callable) -> None:
-    aioschedule.every().day.at("00:00").do(func)
+    aioschedule.every(6).hours.do(func)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
 
 
 async def __backup() -> None:
-    print('Backup started at', datetime.now())
+    print("Backup started at", datetime.now())
 
-    backup_dir = f"backup/{datetime.now().strftime('%Y-%m-%d')}"
-    if not os.path.exists("backup"):
-        os.makedirs("backup")
-    else:
-        print('Backup folder already exists.\nSkipping...')
-        return
-    if not os.path.exists(backup_dir):
-        os.makedirs(backup_dir)
+    # backup_dir = f"backup/{datetime.now().strftime('%Y-%m-%d')}"
+    # if not os.path.exists("backup"):
+    #     os.makedirs("backup")
+    # else:
+    #     print("Backup folder already exists.\nSkipping...")
+    #     return
+    # if not os.path.exists(backup_dir):
+    #     os.makedirs(backup_dir)
 
-    shutil.copy("config.json", backup_dir)
-    shutil.copy("database.db", backup_dir)
+    # shutil.copy("config.json", backup_dir)
+    # shutil.copy("database.db", backup_dir)
+    
+    upload_objects(["config.json", "database.db"])
+    print("Backup finished at", datetime.now())
+    
+
 
 async def on_startup(_) -> None:
     asyncio.create_task(scheduler(__backup))

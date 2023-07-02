@@ -14,5 +14,8 @@ async def execute(
     order_id = data["oid"]
     status = data["s"]
     print(order_id, status)
-    await models.orders.Order(order_id).set_status(status)
+    order = models.orders.Order(order_id)
+    await order.set_status(status)
     await order_execute(callback_query, user, data, message)
+    await constants.bot.send_message(await order.user_id, constants.language.order_status_changed(order_id, constants.STATUS_DICT[status]))
+    
