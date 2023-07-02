@@ -3,6 +3,7 @@ import asyncio
 import os, shutil
 from datetime import datetime
 from s3backup import upload_objects
+import constants
 
 
 async def scheduler(func: callable) -> None:
@@ -26,11 +27,13 @@ async def __backup() -> None:
 
     # shutil.copy("config.json", backup_dir)
     # shutil.copy("database.db", backup_dir)
-    
+
     upload_objects(["config.json", "database.db"])
     print("Backup finished at", datetime.now())
-    
 
 
 async def on_startup(_) -> None:
+    await constants.bot.set_webhook(
+        os.getenv("WEBHOOK_HOST", "") + os.getenv("WEBHOOK_PATH", "")
+    )
     asyncio.create_task(scheduler(__backup))

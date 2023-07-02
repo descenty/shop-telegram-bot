@@ -7,6 +7,8 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State
 from aiogram.types import BotCommand
+from aiogram.utils.executor import start_webhook
+from aiogram.contrib.middlewares.logging import LoggingMiddleware
 import dotenv
 
 import constants
@@ -48,6 +50,7 @@ storage = MemoryStorage()
 bot = constants.create_bot(TOKEN)
 # bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
+dp.middleware.setup(LoggingMiddleware())
 
 
 async def setup_bot_commands():
@@ -246,9 +249,17 @@ async def process_message_state(
 
 
 if __name__ == "__main__":
-    executor.start_polling(
-        dp,
-        skip_updates=True,
-        loop=constants.loop,
+    # executor.start_polling(
+    #     dp,
+    #     skip_updates=True,
+    #     loop=constants.loop,
+    #     on_startup=schedules.on_startup,
+    # )
+    start_webhook(
+        dispatcher=dp,
+        webhook_path=os.getenv("WEBHOOK_PATH"),
         on_startup=schedules.on_startup,
+        skip_updates=True,
+        host=os.getenv("WEBAPP_HOST"),
+        port=os.getenv("WEBAPP_PORT"),
     )
