@@ -22,6 +22,7 @@ import utils
 import database
 import schedules
 import locale
+import logging
 
 locale.setlocale(locale.LC_ALL, "ru_RU.UTF-8")
 
@@ -50,7 +51,7 @@ storage = MemoryStorage()
 bot = constants.create_bot(TOKEN)
 # bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
-dp.middleware.setup(LoggingMiddleware())
+
 
 
 async def setup_bot_commands():
@@ -246,6 +247,20 @@ async def process_message_state(
         import traceback
 
         traceback.print_exc()
+        
+async def on_shutdown(dp):
+    print('Shutting down..')
+
+    # insert code here to run it before shutdown
+
+    # Remove webhook (not acceptable in some cases)
+    await bot.delete_webhook()
+
+    # Close DB connection (if used)
+    await dp.storage.close()
+    await dp.storage.wait_closed()
+
+    logging.warning('Bye!')
 
 
 if __name__ == "__main__":
@@ -259,6 +274,7 @@ if __name__ == "__main__":
         dispatcher=dp,
         webhook_path=os.getenv("WEBHOOK_PATH"),
         on_startup=schedules.on_startup,
+        on_shutdown=on_shutdown,
         skip_updates=True,
         host=os.getenv("WEBAPP_HOST"),
         port=os.getenv("WEBAPP_PORT"),
