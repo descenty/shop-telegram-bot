@@ -6,10 +6,11 @@ services:
     depends_on:
       - caddy
   caddy:
-    build: ./caddy
+    image: caddy
     ports:
       - 80:80
       - 443:443
     volumes:
+      - ${PWD}/Caddyfile:/etc/caddy/Caddyfile
       - ${HOME}/docker/volumes/caddy/data:/data
       - ${HOME}/docker/volumes/caddy/config:/config
