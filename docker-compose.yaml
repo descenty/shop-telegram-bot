@@ -15,5 +15,5 @@ services:
       - ${HOME}/docker/volumes/caddy/data:/data
       - ${HOME}/docker/volumes/caddy/config:/config
     environment:
-      WEBAPP_HOST: "${WEBAPP_HOST}"
-      WEBAPP_PORT: "${WEBAPP_PORT}"
+      WEBAPP_HOST: descenty.ru
+      WEBAPP_PORT: 3001
