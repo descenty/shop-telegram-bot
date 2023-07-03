@@ -1,4 +1,4 @@
-FROM caddy:latest
+FROM caddy:2.6.4
 FROM python:3.11
 
 RUN pip install python-dotenv
