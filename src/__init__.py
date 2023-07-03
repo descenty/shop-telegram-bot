@@ -47,7 +47,7 @@ if not os.path.exists("database.db"):
 dotenv.load_dotenv(dotenv.find_dotenv())
 TOKEN = os.getenv("TOKEN")
 if not TOKEN:
-    print("No token found!")
+    logging.info("No token found!")
     exit(1)
 
 
@@ -150,7 +150,7 @@ async def process_callback(callback_query: types.CallbackQuery) -> None:
     execute_args = (callback_query, user, data)
 
     if config["settings"]["debug"]:
-        print(f"{call} | [{user.id}] | {data}")
+        logging.info(f"{call} | [{user.id}] | {data}")
     if call in ["cancel", "skip"]:
         if "d" in data:
             return await importlib.import_module(
@@ -169,7 +169,7 @@ async def process_callback(callback_query: types.CallbackQuery) -> None:
     if not permission:
         return await utils.sendNoPermission(callback_query.message)
     try:
-        print(f"callbacks.{data['r']}.{call}")
+        logging.info(f"callbacks.{data['r']}.{call}")
         return await importlib.import_module(
             f"callbacks.{data['r']}.{call}"
         ).execute(*execute_args)

@@ -1,3 +1,4 @@
+import logging
 import aioschedule
 import asyncio
 import os, shutil
@@ -14,13 +15,13 @@ async def scheduler(func: callable) -> None:
 
 
 def backup() -> None:
-    print("Backup started at", datetime.now())
+    logging.info("Backup started at", datetime.now())
 
     # backup_dir = f"backup/{datetime.now().strftime('%Y-%m-%d')}"
     # if not os.path.exists("backup"):
     #     os.makedirs("backup")
     # else:
-    #     print("Backup folder already exists.\nSkipping...")
+    #     logging.info("Backup folder already exists.\nSkipping...")
     #     return
     # if not os.path.exists(backup_dir):
     #     os.makedirs(backup_dir)
@@ -29,7 +30,7 @@ def backup() -> None:
     # shutil.copy("database.db", backup_dir)
 
     upload_objects(["config.json", "database.db"])
-    print("Backup finished at", datetime.now())
+    logging.info("Backup finished at", datetime.now())
 
 
 async def on_startup(_) -> None:

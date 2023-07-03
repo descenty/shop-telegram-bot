@@ -85,7 +85,6 @@ class Order:
 
         @property
         def dict(self) -> dict:
-            print(self.__item_raw)
             return self.__item_raw
 
         @property

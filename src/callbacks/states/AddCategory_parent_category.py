@@ -6,7 +6,6 @@ from markups import markups
 
 async def execute(callback_query: types.CallbackQuery, user: models.users.User, data: dict, state: FSMContext, message: types.Message=None) -> None:
     call = callback_query.data[callback_query.data.index("}")+1:]
-    print(call)
 
     match call:
         case "skip":
@@ -15,7 +14,6 @@ async def execute(callback_query: types.CallbackQuery, user: models.users.User, 
             await state.update_data(parent_category=data["cid"])
 
     state_data = await state.get_data()
-    print(state_data)
     await models.categories.create(state_data["name"], state_data["parent_category"])
     await callback_query.message.edit_text(
         text=constants.language.category_created,

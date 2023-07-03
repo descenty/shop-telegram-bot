@@ -13,7 +13,6 @@ async def execute(
 ) -> None:
     order_id = data["oid"]
     status = data["s"]
-    print(order_id, status)
     order = models.orders.Order(order_id)
     await order.set_status(status)
     await order_execute(callback_query, user, data, message)
