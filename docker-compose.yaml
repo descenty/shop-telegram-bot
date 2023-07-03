@@ -7,7 +7,7 @@ services:
       - caddy
   caddy:
     image: caddy
-    command: export "$(grep -vE "^(#.*|\s*)$" .env)"
+    command: export $( grep -vE "^(#.*|\s*)$" .env )
     ports:
       - 80:80
       - 443:443
