@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 3001
 
-CMD ["./pull_start.sh"]
+CMD ["python", "src/__init__.py"]
