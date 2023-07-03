@@ -15,3 +15,6 @@ services:
       - ${PWD}/Caddyfile:/etc/caddy/Caddyfile
       - ${HOME}/docker/volumes/caddy/data:/data
       - ${HOME}/docker/volumes/caddy/config:/config
+    environment:
+      WEBAPP_HOST: ${WEBAPP_HOST}
+      WEBAPP_PORT: ${WEBAPP_PORT}
