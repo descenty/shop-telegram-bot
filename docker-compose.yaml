@@ -7,7 +7,6 @@ services:
       - caddy
   caddy:
     image: caddy
-    command: set -a && source .env && set +a
     ports:
       - 80:80
       - 443:443
