@@ -5,8 +5,11 @@ services:
       - 3001:3001
     volumes:
       - ${HOME}/docker/volumes/tg-bot/:/app
+    depends_on:
+      - caddy
   caddy:
     image: caddy
+    command: set -a && source .env
     ports:
       - 443:443
     volumes:
