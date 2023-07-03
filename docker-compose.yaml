@@ -3,8 +3,6 @@ services:
     build: .
     ports:
       - 3001:3001
-    volumes:
-      - ${HOME}/docker/volumes/tg-bot/:/app
     depends_on:
       - caddy
   caddy:
