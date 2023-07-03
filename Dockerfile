@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 3001
 
-CMD /bin/bash -c './pull_start.sh'
+CMD ["./pull_start.sh"]
