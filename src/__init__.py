@@ -18,6 +18,8 @@ import models.users as users
 import models.items as items
 import models.categories as categories
 import models.orders as orders
+from s3pull import pull_objects
+from s3backup import upload_objects
 import utils
 import database
 import schedules
@@ -51,7 +53,6 @@ storage = MemoryStorage()
 bot = constants.create_bot(TOKEN)
 # bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
-
 
 
 async def setup_bot_commands():
@@ -247,20 +248,18 @@ async def process_message_state(
         import traceback
 
         traceback.print_exc()
-        
+
+
 async def on_shutdown(dp):
-    print('Shutting down..')
+    print("Backups..")
 
-    # insert code here to run it before shutdown
+    schedules.backup()
 
-    # Remove webhook (not acceptable in some cases)
+    print("Shutting down..")
+
     await bot.delete_webhook()
-
-    # Close DB connection (if used)
     await dp.storage.close()
     await dp.storage.wait_closed()
-
-    logging.warning('Bye!')
 
 
 if __name__ == "__main__":
@@ -270,6 +269,7 @@ if __name__ == "__main__":
     #     loop=constants.loop,
     #     on_startup=schedules.on_startup,
     # )
+    pull_objects(["config.json", "database.db"])
     start_webhook(
         dispatcher=dp,
         webhook_path=os.getenv("WEBHOOK_PATH"),

@@ -13,7 +13,7 @@ async def scheduler(func: callable) -> None:
         await asyncio.sleep(1)
 
 
-async def __backup() -> None:
+def backup() -> None:
     print("Backup started at", datetime.now())
 
     # backup_dir = f"backup/{datetime.now().strftime('%Y-%m-%d')}"
@@ -36,4 +36,4 @@ async def on_startup(_) -> None:
     await constants.bot.set_webhook(
         os.getenv("WEBHOOK_HOST", "") + os.getenv("WEBHOOK_PATH", "")
     )
-    asyncio.create_task(scheduler(__backup))
+    asyncio.create_task(scheduler(backup))
