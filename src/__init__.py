@@ -28,6 +28,8 @@ import logging
 
 locale.setlocale(locale.LC_ALL, "ru_RU.UTF-8")
 
+logging.basicConfig(level=logging.INFO)
+
 # First startup
 if not os.path.exists("database.db"):
     tasks = [
@@ -251,11 +253,11 @@ async def process_message_state(
 
 
 async def on_shutdown(dp):
-    print("Backups..")
+    logging.info("Backuping...")
 
     schedules.backup()
-
-    print("Shutting down..")
+    
+    logging.info("Shutting down...")
 
     await bot.delete_webhook()
     await dp.storage.close()
