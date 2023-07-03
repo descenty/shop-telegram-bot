@@ -7,12 +7,12 @@ services:
       - ${HOME}/docker/volumes/tg-bot/:/app
     depends_on:
       - caddy
-  caddy:
-    image: caddy
-    command: set -a && source .env
-    ports:
-      - 443:443
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - ${HOME}/docker/volumes/caddy/data:/data
-      - ${HOME}/docker/volumes/caddy/config:/config    
+  # caddy:
+  #   image: caddy
+  #   command: set -a && source .env
+  #   ports:
+  #     - 443:443
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile
+  #     - ${HOME}/docker/volumes/caddy/data:/data
+  #     - ${HOME}/docker/volumes/caddy/config:/config    
