@@ -4,7 +4,7 @@ services:
     ports:
       - 3001:3001
     volumes:
-      ${HOME}/docker/volumes/tg-bot/:/app
+      - ${HOME}/docker/volumes/tg-bot/:/app
   caddy:
     image: caddy
     ports:
