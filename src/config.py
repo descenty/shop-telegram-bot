@@ -2,7 +2,7 @@ import os
 import json
 from typing import Any
 
-filename = "config.json"
+filename = "data/config.json"
 class Config:
     def __repr__(self):
         return self.__data 

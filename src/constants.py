@@ -6,7 +6,7 @@ from config import config
 import os
 import asyncio
 
-if not os.path.exists("config.json"):
+if not os.path.exists("data/config.json"):
     config.init()
 
 import localization.ru as language

@@ -31,7 +31,7 @@ locale.setlocale(locale.LC_ALL, "ru_RU.UTF-8")
 logging.basicConfig(level=logging.INFO)
 
 # First startup
-if not os.path.exists("database.db"):
+if not os.path.exists("data/database.db"):
     tasks = [
         database.fetch(object.database_table)
         for object in [

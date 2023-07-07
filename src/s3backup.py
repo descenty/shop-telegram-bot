@@ -12,4 +12,4 @@ def upload_objects(objects: list[str]) -> None:
     )
     bucket = s3.Bucket(getenv("S3_BUCKET_NAME"))
     for obj in objects:
-        bucket.upload_file(obj, obj)
+        bucket.upload_file("data/" + obj, obj)
