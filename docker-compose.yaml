@@ -7,6 +7,8 @@ services:
     env_file: stack.env
     depends_on:
       - caddy
+    volumes:
+      - ${HOME}/docker/volumes/tg-bot-aromimir:/app
   caddy:
     build:
       context: .
