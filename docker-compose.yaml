@@ -8,7 +8,7 @@ services:
     depends_on:
       - caddy
     volumes:
-      - ${HOME}/docker/volumes/tg-bot-aromimir:/app/data
+      - /root/docker/volumes/tg-bot-aromimir:/app/data
   caddy:
     build:
       context: .
@@ -19,5 +19,5 @@ services:
       - 443:443
       - 2019:2019
     volumes:
-      - ${HOME}/docker/volumes/caddy/data:/data
-      - ${HOME}/docker/volumes/caddy/config:/config
+      - /root/docker/volumes/caddy/data:/data
+      - /root/docker/volumes/caddy/config:/config
