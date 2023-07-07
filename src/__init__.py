@@ -271,7 +271,7 @@ if __name__ == "__main__":
     #     loop=constants.loop,
     #     on_startup=schedules.on_startup,
     # )
-    # pull_objects(["config.json", "database.db"])
+    pull_objects(["config.json", "database.db"])
     start_webhook(
         dispatcher=dp,
         webhook_path=os.getenv("WEBHOOK_PATH"),
