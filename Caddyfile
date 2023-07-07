@@ -1,4 +1,7 @@
+servers {
+	metrics
+}
+
 1546625-cm17948.twc1.net {
 	reverse_proxy /* tgbot:3001
-	metrics
 }
