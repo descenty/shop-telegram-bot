@@ -1,7 +1,6 @@
 services:
   tgbot:
     build: .
-    pull_policy: build
     ports:
       - 3001:3001
     env_file: stack.env
@@ -13,6 +12,6 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ${PWD}/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ${PWD}/Caddyfile:/etc/Caddyfile
       - ${HOME}/docker/volumes/caddy/data:/data
       - ${HOME}/docker/volumes/caddy/config:/config
