@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 3001
 
-CMD ["python", "src/__init__.py"]
+ENTRYPOINT ["python", "src/__init__.py"]
