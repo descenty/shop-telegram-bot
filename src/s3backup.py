@@ -17,7 +17,7 @@ def upload_objects(objects: list[str]) -> None:
         bucket.upload_file(
             "data/" + obj,
             "archive/"
-            + datetime.now(pytz.timezone("Russia/Moscow")).strftime("%d-%m-%Y")
+            + datetime.now(pytz.timezone("Europe/Moscow")).strftime("%d-%m-%Y")
             + "/"
             + obj,
         )
