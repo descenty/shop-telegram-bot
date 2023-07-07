@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.caddy
-    pull_policy: always
+    pull_policy: build
     ports:
       - 80:80
       - 443:443
