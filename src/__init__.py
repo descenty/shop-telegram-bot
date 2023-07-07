@@ -255,7 +255,7 @@ async def process_message_state(
 async def on_shutdown(dp):
     logging.info("Backuping...")
 
-    schedules.backup()
+    # schedules.backup()
     
     logging.info("Shutting down...")
 
