@@ -43,8 +43,8 @@ bot = None
 
 def create_bot(token: str) -> aiogram.bot.bot.Bot:
     global bot
-    api_server = aiogram.bot.api.TelegramAPIServer(
-        "https://api.bots.mn/telegram/", "https://api.bots.mn/telegram/"
-    )
-    bot = aiogram.Bot(token=token, loop=loop, server=api_server)
+    # api_server = aiogram.bot.api.TelegramAPIServer(
+    #     "https://api.bots.mn/telegram/", "https://api.bots.mn/telegram/"
+    # )
+    bot = aiogram.Bot(token=token, loop=loop, proxy="https://api.bots.mn/telegram/")
     return bot
