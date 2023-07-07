@@ -5,14 +5,14 @@ services:
     ports:
       - 3001:3001
     env_file: stack.env
-    # depends_on:
-    #   - caddy
-  # caddy:
-  #   image: caddy
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - ${PWD}/Caddyfile:/etc/caddy/Caddyfile
-  #     - ${HOME}/docker/volumes/caddy/data:/data
-  #     - ${HOME}/docker/volumes/caddy/config:/config
+    depends_on:
+      - caddy
+  caddy:
+    image: caddy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ${PWD}/Caddyfile:/etc/caddy/Caddyfile
+      - ${HOME}/docker/volumes/caddy/data:/data
+      - ${HOME}/docker/volumes/caddy/config:/config
