@@ -3,8 +3,8 @@ services:
     build: .
     ports:
       - 3001:3001
-    depends_on:
-      - caddy
+    # depends_on:
+    #   - caddy
   # caddy:
   #   image: caddy
   #   ports:
