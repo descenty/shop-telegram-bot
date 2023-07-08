@@ -14,18 +14,22 @@ async def execute(
 ) -> None:
     text = constants.language.my_orders
     orders = await user.orders
-    orders_statuses = zip(
-        orders, [await order.status for order in await user.orders]
+    orders_statuses_dates = zip(
+        orders,
+        [await order.status for order in await user.orders],
+        [await order.date_created for order in await user.orders],
+    )
+    orders_statuses_dates = sorted(
+        orders_statuses_dates, key=lambda x: (x[1], x[2])
     )
 
     date_format = "%d %b. %Y %H:%M:%S"
-
     markup = [
         (
-            f"{(await order.date_created).strftime(date_format)} - {await order.total_price} ₽ {constants.STATUS_DICT[status]}",
+            f"{(date).strftime(date_format)} - {await order.total_price} ₽ {constants.STATUS_DICT[status]}",
             f'{{"r":"user","oid":{order.id}}}order',
         )
-        for order, status in orders_statuses
+        for order, status, date in orders_statuses_dates
         if constants.OrderStatus(status)
         not in [constants.OrderStatus.DONE, constants.OrderStatus.CANCELED]
     ]
