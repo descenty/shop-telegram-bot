@@ -107,8 +107,8 @@ async def handle_text(message: types.Message) -> None:
             destination = "catalogue"
         case constants.language.cart:
             destination = "cart"
-        case constants.language.profile:
-            destination = "profile"
+        case constants.language.my_orders:
+            destination = "orders"
         case constants.language.faq:
             destination = "faq"
         case constants.language.my_orders:
@@ -256,7 +256,7 @@ async def on_shutdown(dp):
     logging.info("Backuping...")
 
     schedules.backup()
-    
+
     logging.info("Shutting down...")
 
     await bot.delete_webhook()
@@ -265,19 +265,22 @@ async def on_shutdown(dp):
 
 
 if __name__ == "__main__":
-    # executor.start_polling(
-    #     dp,
-    #     skip_updates=True,
-    #     loop=constants.loop,
-    #     on_startup=schedules.on_startup,
-    # )
     pull_objects(["config.json", "database.db"])
-    start_webhook(
-        dispatcher=dp,
-        webhook_path=os.getenv("WEBHOOK_PATH"),
-        on_startup=schedules.on_startup,
-        on_shutdown=on_shutdown,
-        skip_updates=True,
-        host=os.getenv("WEBAPP_HOST"),
-        port=os.getenv("WEBAPP_PORT"),
-    )
+    if os.getenv("BOT_MODE") == "polling":
+        executor.start_polling(
+            dp,
+            skip_updates=True,
+            loop=constants.loop,
+            on_startup=schedules.on_startup,
+        )
+    else:
+        start_webhook(
+            dispatcher=dp,
+            loop=constants.loop,
+            webhook_path=os.getenv("WEBHOOK_PATH"),
+            on_startup=schedules.on_startup,
+            on_shutdown=on_shutdown,
+            skip_updates=True,
+            host=os.getenv("WEBAPP_HOST"),
+            port=os.getenv("WEBAPP_PORT"),
+        )
