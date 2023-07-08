@@ -29,7 +29,7 @@ def backup() -> None:
     # shutil.copy("config.json", backup_dir)
     # shutil.copy("database.db", backup_dir)
 
-    upload_objects(["config.json", "database.db"])
+    upload_objects(["data/config.json", "data/database.db"])
     logging.info("Backup finished at", datetime.now())
 
 

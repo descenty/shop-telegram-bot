@@ -29,7 +29,7 @@ class Markups:
         markup.add(types.KeyboardButton(language.catalogue))
         markup.add(types.KeyboardButton(language.cart))
         markup.add(
-            types.KeyboardButton(language.profile)
+            types.KeyboardButton(language.my_orders)
         )  # , types.KeyboardButton(language.faq))
         return markup
 

@@ -13,20 +13,28 @@ async def execute(
     message=None,
 ) -> None:
     text = constants.language.my_orders
-
     orders = await user.orders
+    orders_statuses = zip(
+        orders, [await order.status for order in await user.orders]
+    )
 
     date_format = "%d %b. %Y %H:%M:%S"
 
     markup = [
         (
-            f"{(await order.date_created).strftime(date_format)} - {await order.total_price} ₽",
+            f"{(await order.date_created).strftime(date_format)} - {await order.total_price} ₽ {constants.STATUS_DICT[status]}",
             f'{{"r":"user","oid":{order.id}}}order',
         )
-        for order in orders
+        for order, status in orders_statuses
+        if constants.OrderStatus(status)
+        not in [constants.OrderStatus.DONE, constants.OrderStatus.CANCELED]
     ]
     markup.append((constants.language.back, f"{constants.JSON_USER}profile"))
 
+    if message:
+        return await message.answer(
+            text=text, reply_markup=markups.create(markup)
+        )
     await callback_query.message.edit_text(
         text=text, reply_markup=markups.create(markup)
     )

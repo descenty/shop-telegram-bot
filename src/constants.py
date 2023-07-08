@@ -6,8 +6,11 @@ from config import config
 import os
 import asyncio
 
-if not os.path.exists("data/config.json"):
-    config.init()
+if not os.path.exists("data"):
+    os.mkdir("data")
+# TODO also if not in S3 bucket
+# if not os.path.exists("data/config.json"):
+#     config.init()
 
 import localization.ru as language
 

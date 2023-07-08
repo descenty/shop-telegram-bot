@@ -2,9 +2,11 @@ import boto3
 from os import getenv
 from dotenv import load_dotenv
 import logging
+import pathlib
+from datetime import datetime
 
 
-def pull_objects(objects: list[str]) -> None:
+def pull_objects(objects: list[str], optional=False) -> None:
     logging.info("Pulling objects from S3...")
     session = boto3.Session(
         aws_access_key_id=getenv("AWS_ACCESS_KEY_ID"),
@@ -15,8 +17,18 @@ def pull_objects(objects: list[str]) -> None:
     )
     bucket = s3.Bucket(getenv("S3_BUCKET_NAME"))
     for obj in objects:
+        local_obj = pathlib.Path("data/" + obj)
+        if (
+            optional
+            and local_obj.exists()
+            and local_obj.stat().st_mtime
+            - bucket.Object("latest/" + obj).last_modified.timestamp()
+            > 0
+        ):
+            logging.info("Skipping " + obj + "...")
+            continue
         bucket.download_file("latest/" + obj, "data/" + obj)
-    logging.info("Objects pulled from S3!")
+        logging.info("Pulled " + obj + "...")
 
 
 if __name__ == "__main__":

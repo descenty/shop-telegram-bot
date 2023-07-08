@@ -78,7 +78,7 @@ contacts = "📞 Контакты"
 refund_policy = "🎫 Политика возврата"
 
 # Profile
-my_orders = "📂 Мои заказы"
+my_orders = "📦 Мои заказы"
 cancel_order = "❌ Отменить заказ"
 restore_order = "✅ Восстановить заказ"
 my_support_tickets = "🙋 Мои тикеты в тех. поддержку"
@@ -116,8 +116,10 @@ change_status = "Изменить статус"
 def change_status_to(new_status):
     return f"Изменить статус на {new_status}"
 
+
 def order_status_changed(order_id: int, new_status: str):
     return f"Статус заказа № {order_id} был изменен на {new_status}"
+
 
 new_order = "Новый заказ!"
 

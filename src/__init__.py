@@ -31,17 +31,20 @@ locale.setlocale(locale.LC_ALL, "ru_RU.UTF-8")
 logging.basicConfig(level=logging.INFO)
 
 # First startup
-if not os.path.exists("data/database.db"):
-    tasks = [
-        database.fetch(object.database_table)
-        for object in [
-            users.User(0),
-            items.Item(0),
-            categories.Category(0),
-            orders.Order(0),
-        ]
-    ]
-    asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
+if not os.path.exists("data"):
+    os.mkdir("data")
+# TODO also if not in S3 bucket
+# if not os.path.exists("data/database.db"):
+#     tasks = [
+#         database.fetch(object.database_table)
+#         for object in [
+#             users.User(0),
+#             items.Item(0),
+#             categories.Category(0),
+#             orders.Order(0),
+#         ]
+#     ]
+#     asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
 
 
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -107,10 +110,6 @@ async def handle_text(message: types.Message) -> None:
             destination = "catalogue"
         case constants.language.cart:
             destination = "cart"
-        case constants.language.my_orders:
-            destination = "orders"
-        case constants.language.faq:
-            destination = "faq"
         case constants.language.my_orders:
             destination = "orders"
         case constants.language.admin_panel:
@@ -265,7 +264,7 @@ async def on_shutdown(dp):
 
 
 if __name__ == "__main__":
-    pull_objects(["config.json", "database.db"])
+    pull_objects(["config.json", "database.db"], optional=True)
     if os.getenv("BOT_MODE") == "polling":
         executor.start_polling(
             dp,
