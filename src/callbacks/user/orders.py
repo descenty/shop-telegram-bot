@@ -24,7 +24,7 @@ async def execute(
     )
 
     date_format = "%d %b. %Y %H:%M:%S"
-    # TODO client order view
+    # TODO client order view where he can write to the manager
     markup = [
         (
             f"{(date).strftime(date_format)} - {await order.total_price} ₽ {constants.STATUS_DICT[status]}",
