@@ -23,7 +23,7 @@ def pull_objects(objects: list[str], optional=False) -> None:
             and local_obj.exists()
             and local_obj.stat().st_mtime
             - bucket.Object("latest/" + obj).last_modified.timestamp()
-            > 0
+            >= 0
         ):
             logging.info("Skipping " + obj + "...")
             continue
