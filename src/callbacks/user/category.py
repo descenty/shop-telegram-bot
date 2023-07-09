@@ -28,8 +28,9 @@ async def execute(
     if parent_id:
         markup.append(
             (
-                constants.language.back,
-                f'{{"r":"user","cid":{parent_id}}}category',
+                # constants.language.back,
+                # f'{{"r":"user","cid":{parent_id}}}category',
+                (constants.language.back, f"{constants.JSON_USER}catalogue") # TODO исправить костыль
             )
         )
     else:
