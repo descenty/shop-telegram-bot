@@ -34,7 +34,6 @@ async def execute(
         if constants.OrderStatus(status)
         not in [constants.OrderStatus.DONE, constants.OrderStatus.CANCELED]
     ]
-    markup.append((constants.language.back, f"{constants.JSON_USER}profile"))
 
     if message:
         return await message.answer(

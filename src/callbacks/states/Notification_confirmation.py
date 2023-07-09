@@ -35,7 +35,7 @@ async def execute(callback_query: types.CallbackQuery, user: models.users.User, 
     await callback_query.message.edit_text(
         text=constants.language.notification_sent(done_users, len(users)),
         reply_markup=markups.create([
-            (constants.language.back, f'{{"r":"admin","d":"users"}}cancel')
+            (constants.language.back, f'{{"r":"admin","d":"adminPanel"}}cancel')
         ])
     )
 

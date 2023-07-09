@@ -9,7 +9,7 @@ async def execute(callback_query: types.CallbackQuery, user: models.users.User, 
     await callback_query.message.edit_text(
         text=constants.language.input_greeting,
         reply_markup=markups.create([
-            (constants.language.back, f'{{"r":"admin","d":"main_settings"}}cancel')
+            (constants.language.back, f'{{"r":"admin","d":"adminPanel"}}cancel')
         ])
     )
 

@@ -2,7 +2,6 @@ from aiogram import types
 import models
 import constants
 from markups import markups
-from .manager_panel import orders_destinations
 
 order_status_text = {
     constants.OrderStatus.CREATED: constants.language.status_created,
@@ -25,38 +24,25 @@ async def execute(
         (item.title, item.price) for item in await order.items
     )
 
-    text = constants.language.format_manager_order(
+    manager = (await models.users.get_managers())[
+        0
+    ]  # в идеале для каждого заказа назначать своего менеджера или отображать всех менеджеров
+
+    text = constants.language.format_user_order(
         order.id,
         await order.date_created,
-        await models.users.User(await order.user_id).username,
+        await manager.username,
         order_status_text[order_status],
         order_title_price,
         await order.total_price,
     )
 
-    markup = []
-    if order_status.value + 1 <= 3:
-        next_order_status = constants.OrderStatus(order_status.value + 1)
-        markup.append(
-            (
-                constants.language.change_status_to(
-                    order_status_text[next_order_status]
-                ),
-                f'{{"r":"manager","oid":{order.id},"s":{next_order_status.value}}}orders.apply_status',
-            )
+    markup = [
+        (
+            constants.language.back,
+            f"{constants.JSON_USER}orders",
         )
-    markup.extend(
-        [
-            (
-                constants.language.change_status,
-                f'{{"r":"manager","oid":{order.id}}}orders.change_status',
-            ),
-            (
-                constants.language.back,
-                orders_destinations[constants.OrderStatus(await order.status)],
-            ),
-        ]
-    )
+    ]
 
     if message:
         return await message.answer(text, reply_markup=markup)

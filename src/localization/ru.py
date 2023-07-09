@@ -19,7 +19,7 @@ show = "🐵 Показать"
 delete = "❌ Удалить"
 reset = "❌ Сбросить"
 no_permission = "У вас нет прав для выполнения данной команды!"
-unknown_command = "Не могу понять команду :("
+unknown_command = "Команда не найдена"
 cross = "❌"
 too_many_categories = "Слишком много категорий!"
 unknown_call_stop_state = "Бот ожидает от вас ввода данных, но вы ничего не ввели. Для выхода из режима ввода данных нажмите на кнопку ниже."
@@ -71,7 +71,7 @@ russian = "🇷🇺 Русский"
 input_greeting = 'Форматирование: \n"%s" - ник пользователя\n\nВведите приветственное сообщение:'
 greeting_was_set = "Приветственное сообщение было успешно изменено!"
 
-greeting = "👋 Приветствие"
+change_greeting = "👋 Изменить приветствие"
 
 # FAQ
 contacts = "📞 Контакты"
@@ -124,7 +124,7 @@ def order_status_changed(order_id: int, new_status: str):
 new_order = "Новый заказ!"
 
 
-def format_order(
+def format_manager_order(
     order_id: int,
     date_created: datetime,
     username: str,
@@ -136,6 +136,31 @@ def format_order(
     text_list = [
         f"Заказ № {order_id} от {(date_created).strftime(date_format)}",
         f"Telegram: @{username}",
+        f"Статус: {status_text}",
+        "---",
+    ]
+    text_list.extend(
+        [
+            f"{index + 1}. {title} - {price} ₽"
+            for index, (title, price) in enumerate(title_price)
+        ]
+    )
+    text_list.extend(["---", f"Итого: {total_price} ₽"])
+    return "\n".join(text_list)
+
+
+def format_user_order(
+    order_id: int,
+    date_created: datetime,
+    manager_username: str,
+    status_text: str,
+    title_price: tuple[tuple[str, int]],
+    total_price: float,
+) -> str:
+    date_format = "%d %b. %Y %H:%M:%S"
+    text_list = [
+        f"Заказ № {order_id} от {(date_created).strftime(date_format)}",
+        f"Менеджер: @{manager_username}",
         f"Статус: {status_text}",
         "---",
     ]

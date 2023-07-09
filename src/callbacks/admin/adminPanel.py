@@ -9,9 +9,11 @@ async def execute(callback_query: types.CallbackQuery, user: models.users.User, 
     markup = markups.create([
         (constants.language.category_management, f"{constants.JSON_ADMIN}categories"),
         (constants.language.item_management, f"{constants.JSON_ADMIN}items"),
-        (constants.language.user_management, f"{constants.JSON_ADMIN}users"),
-        (constants.language.stats, f"{constants.JSON_ADMIN}stats"),
-        (constants.language.settings, f"{constants.JSON_ADMIN}settings"),
+        (constants.language.notify_everyone, f"{constants.JSON_ADMIN}notify_everyone"),
+        (constants.language.change_greeting, f"{constants.JSON_ADMIN}greeting"),
+        # (constants.language.user_management, f"{constants.JSON_ADMIN}users"),
+        # (constants.language.stats, f"{constants.JSON_ADMIN}stats"),
+        # (constants.language.settings, f"{constants.JSON_ADMIN}settings"),
     ])
 
     if message:
