@@ -5,6 +5,7 @@ from aiogram.dispatcher import FSMContext
 import models
 import constants
 from markups import markups
+import logging
 
 import states
 
@@ -98,4 +99,9 @@ async def execute(
         )
 
         for manager in managers:
-            await constants.bot.send_message(manager.id, text)
+            try:
+                await constants.bot.send_message(manager.id, text)
+            except:
+                logging.error(
+                    f"Cannot send order notification to manager with id: {manager.id}"
+                )
