@@ -33,4 +33,4 @@ def pull_objects(objects: list[str], optional=False) -> None:
 
 if __name__ == "__main__":
     load_dotenv()
-    # pull_objects(["config.json", "database.db"])
+    pull_objects(["config.json", "database.db"])

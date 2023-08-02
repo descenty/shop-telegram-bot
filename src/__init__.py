@@ -264,7 +264,7 @@ async def on_shutdown(dp):
 
 
 if __name__ == "__main__":
-    pull_objects(["config.json", "database.db"], optional=True)
+    # pull_objects(["config.json", "database.db"], optional=True)
     if os.getenv("BOT_MODE") == "polling":
         executor.start_polling(
             dp,
