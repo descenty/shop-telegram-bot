@@ -37,4 +37,4 @@ async def on_startup(_) -> None:
     await constants.bot.set_webhook(
         os.getenv("WEBHOOK_HOST", "") + os.getenv("WEBHOOK_PATH", "")
     )
-    asyncio.create_task(scheduler(backup))
+    # asyncio.create_task(scheduler(backup))
