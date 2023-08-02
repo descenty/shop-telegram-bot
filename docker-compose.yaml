@@ -4,6 +4,7 @@ services:
     pull_policy: build
     ports:
       - 3001:3001
+    restart: always
     env_file: stack.env
     depends_on:
       - caddy
@@ -14,6 +15,7 @@ services:
       context: .
       dockerfile: Dockerfile.caddy
     pull_policy: build
+    restart: always
     ports:
       - 80:80
       - 443:443
